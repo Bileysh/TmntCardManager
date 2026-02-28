@@ -1,0 +1,44 @@
+@model TmntCardManager.Models.Playerprofile
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Редагувати профіль</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Nickname" class="control-label"></label>
+                <input asp-for="Nickname" class="form-control" />
+                <span asp-validation-for="Nickname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Winrate" class="control-label"></label>
+                <input asp-for="Winrate" class="form-control" />
+                <span asp-validation-for="Winrate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Avatarurl" class="control-label"></label>
+                <input asp-for="Avatarurl" class="form-control" />
+                <span asp-validation-for="Avatarurl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Зберегти" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Details" asp-route-id="@Model.Id">Скасувати і повернутися до профілю</a>
+    </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

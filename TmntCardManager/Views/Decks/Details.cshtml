@@ -1,0 +1,81 @@
+@model TmntCardManager.Models.Deck
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Деталі колоди</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Createdat)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Createdat)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.User)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.User.Id)
+        </dd>
+    </dl>
+</div>
+<hr />
+<h4>Карти у цій колоді:</h4>
+
+@if (Model.Deckcards != null && Model.Deckcards.Any())
+{
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4 mb-4">
+        @foreach (var item in Model.Deckcards)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-secondary position-relative">
+                
+                    @if (item.Quantity > 1)
+                    {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger fs-6" style="z-index: 10;">
+                            @item.Quantity
+                        </span>
+                    }
+                
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <img src="@item.Card.Imageurl">
+                    </div>
+                
+                    <div class="card-footer bg-transparent border-top-0 text-center pb-3">
+                        <a asp-controller="Deckcards" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm w-100">
+                            Видалити
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">
+        Ця колода поки що порожня. Час додати кілька карт!
+    </div>
+}
+
+<div class="mt-3 mb-4">
+    <a asp-controller="Deckcards" asp-action="Create" asp-route-deckId="@Model.Id" class="btn btn-success btn-lg shadow-sm">
+        + Додати нову карту
+    </a>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a> |
+    <a asp-action="Index">Назад до списку</a>
+</div>

@@ -1,0 +1,38 @@
+@model TmntCardManager.Models.Playerprofile
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Ігровий профіль: @Model.Nickname</h1>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Nickname)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Nickname)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Winrate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Winrate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Avatarurl)
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                var avatarSrc = string.IsNullOrEmpty(Model.Avatarurl) ? "/images/default_avatar.png" : Model.Avatarurl;
+            }
+            <img src="@avatarSrc" alt="Аватар гравця" style="max-width: 150px; border-radius: 8px;" class="img-thumbnail" />
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a> |
+    <a asp-controller="Users" asp-action="Details" asp-route-id="@Model.Id">Назад до акаунта</a>
+    </div>

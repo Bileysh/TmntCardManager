@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.ComponentModel.DataAnnotations;
 
 namespace TmntCardManager.Models;
@@ -9,6 +8,7 @@ public class Card
     public int Id { get; set; }
 
     [Display(Name = "Зображення")]
+    [Required(ErrorMessage = "Поле 'Зображення' є обов'язковим")]
     public string? Imageurl { get; set; }
 
     [Required(ErrorMessage = "Поле 'Ім'я' є обов'язковим")]
@@ -30,11 +30,10 @@ public class Card
     [Range(0, 9999, ErrorMessage = "Значення має бути від 0 до 9999")]
     [Display(Name = "Кмітливість")]
     public int? Wit { get; set; }
-
     [Display(Name = "Фракція")]
     public int? Classid { get; set; }
-
-    public virtual Cardclass? Class { get; set; } = null!;
+    [Display(Name = "Фракція")]
+    public virtual Cardclass? Class { get; set; }
 
     public virtual ICollection<Deckcard> Deckcards { get; set; } = new List<Deckcard>();
 }

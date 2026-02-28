@@ -20,13 +20,21 @@ namespace TmntCardManager.Controllers
         }
 
         // GET: Cards
-        public async Task<IActionResult> Index(int? id, string? name)
+        public async Task<IActionResult> Index(int? id)
         {
-            if (id == null) return RedirectToAction("Index", "CardClasses"); 
+            if (id == null)
+            {
+                ViewBag.CardclassName = "Всі (Загальний список)";
+                var allCards = _context.Cards.Include(c => c.Class);
+                return View(await allCards.ToListAsync());
+            }
 
             ViewBag.CardclassId = id;
-            ViewBag.CardclassName = name;
-
+            var currentClass = await _context.Cardclasses.FindAsync(id);
+            if (currentClass != null)
+            {
+                ViewBag.CardclassName = currentClass.Name;
+            }
             var cardsByClass = _context.Cards
                 .Where(c => c.Classid == id) 
                 .Include(c => c.Class);      
@@ -35,7 +43,7 @@ namespace TmntCardManager.Controllers
         }
 
         // GET: Cards/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int? factionId)
         {
             if (id == null)
             {
@@ -49,14 +57,15 @@ namespace TmntCardManager.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.ReturnFactionId = factionId;
             return View(card);
         }
 
         // GET: Cards/Create
-        public IActionResult Create(int id)
+        public IActionResult Create(int id, int? factionId)
         {
-            ViewBag.CurrentClassId = id; 
+            ViewBag.ReturnFactionId = factionId;
+            ViewData["Classid"] = new SelectList(_context.Cardclasses, "Id", "Name");
             return View();
         }
 
@@ -79,15 +88,15 @@ namespace TmntCardManager.Controllers
             {
                 _context.Add(card);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new { id = card.Classid });
+                return RedirectToAction("Details", "CardClasses", new { id = card.Classid });
             }
 
-            ViewBag.Classid = card.Classid;
+            ViewData["Classid"] = new SelectList(_context.Cardclasses, "Id", "Name", card.Classid);
             return View(card);
         }
 
         // GET: Cards/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, int? factionId)
         {
             if (id == null)
             {
@@ -99,7 +108,8 @@ namespace TmntCardManager.Controllers
             {
                 return NotFound();
             }
-            ViewData["Classid"] = new SelectList(_context.Cardclasses, "Id", "Id", card.Classid);
+            ViewBag.ReturnFactionId = factionId;
+            ViewData["Classid"] = new SelectList(_context.Cardclasses, "Id", "Name");
             return View(card);
         }
 
@@ -133,14 +143,15 @@ namespace TmntCardManager.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "CardClasses", new { id = card.Classid });
+                
             }
-            ViewData["Classid"] = new SelectList(_context.Cardclasses, "Id", "Id", card.Classid);
+            ViewData["Classid"] = new SelectList(_context.Cardclasses, "Id", "Name", card.Classid);
             return View(card);
         }
 
         // GET: Cards/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, int? factionId)
         {
             if (id == null)
             {
@@ -154,7 +165,7 @@ namespace TmntCardManager.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.ReturnFactionId = factionId;
             return View(card);
         }
 
@@ -170,7 +181,8 @@ namespace TmntCardManager.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "CardClasses", new { id = card.Classid });
+            
         }
 
         private bool CardExists(int id)

@@ -1,0 +1,59 @@
+﻿@model IEnumerable<TmntCardManager.Models.User>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Користувачі</h1>
+
+<p>
+    <a asp-action="Create"class="btn btn-success">Додати нового користувача</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th> 
+            <th>
+                @Html.DisplayNameFor(model => model.Passwordhash)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Role)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Passwordhash)
+            </td>
+            <td>
+                @if (item.Role == "User")
+                {
+                    <span class="badge bg-primary">Користувач</span>
+                }
+                else if (item.Role == "Admin")
+                {
+                    <span class="badge bg-danger">Адміністратор</span>
+                }
+                else
+                {
+                    @item.Role
+                }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
