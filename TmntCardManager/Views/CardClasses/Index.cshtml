@@ -39,3 +39,42 @@
 }
     </tbody>
 </table>
+<div class="mb-4">
+    <h4>Розподіл карт у грі</h4>
+    <div id="fractionChart" style="width: 100%; height: 350px;"></div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawFractionChart);
+
+        function drawFractionChart() {
+            fetch('/api/charts/cardsByFraction')
+                .then(response => response.json())
+                .then(data => {
+                    const dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('string', 'Фракція');
+                    dataTable.addColumn('number', 'Кількість карт');
+
+                    data.forEach(item => { dataTable.addRow([item.name, item.count]); });
+
+                    const options = {
+                        title: 'Частка фракцій у загальній базі карт',
+                        backgroundColor: 'transparent', 
+                        pieHole: 0.4,
+                        titleTextStyle: {
+                            color: 'white',
+                            fontSize: 18
+                        },
+                        legend: {
+                            textStyle: { color: 'white' }
+                        }
+                    };
+                    const chart = new google.visualization.PieChart(document.getElementById('fractionChart'));
+                    chart.draw(dataTable, options);
+                });
+        }
+    </script>
+}

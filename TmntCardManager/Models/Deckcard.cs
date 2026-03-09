@@ -13,7 +13,7 @@ public class Deckcard
     [Display(Name = "Карта")]
     public int Cardid { get; set; }
     [Display(Name = "Карта")]
-    public virtual Card? Card { get; set; } = null!;
+    public virtual Card? Card { get; set; } 
     [Display(Name = "Колода")]
-    public virtual Deck? Deck { get; set; } = null!;
+    public virtual Deck? Deck { get; set; }
 }

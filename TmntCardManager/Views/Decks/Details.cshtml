@@ -79,3 +79,75 @@ else
     <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a> |
     <a asp-action="Index">Назад до списку</a>
 </div>
+<hr />
+<h4>Бойовий потенціал колоди</h4>
+<div id="deckStatsChart" style="width: 100%; height: 350px;"></div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawDeckStats);
+
+        function drawDeckStats() {
+            fetch('/api/charts/deckStats/@Model.Id')
+                .then(response => response.json())
+                .then(data => {
+                    const totalStats = data.reduce((sum, item) => sum + item.count, 0);
+                    if (totalStats === 0) return;
+
+                    const dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('string', 'Характеристика');
+                    dataTable.addColumn('number', 'Значення');
+                    dataTable.addColumn({type: 'string', role: 'style'});
+                    dataTable.addColumn({type: 'number', role: 'annotation'});
+
+                    const colors = ['#dc3545', '#28a745', '#ffc107', '#0d6efd'];
+
+                    data.forEach((item, index) => {
+                        dataTable.addRow([item.name, item.count, colors[index], item.count]);
+                    });
+
+                    const options = {
+                        title: 'Сумарні характеристики карт у колоді',
+                        backgroundColor: 'transparent',
+                        legend: { position: 'none' },
+                        titleTextStyle: { color: 'white', fontSize: 18 },
+
+                        hAxis: {
+                            textStyle: { color: 'white' },
+                            minValue: 0, 
+                            format: '0', 
+                            gridlines: {
+                                color: '#666', 
+                                count: 8       
+                            },
+                            minorGridlines: {
+                                color: '#333', 
+                                count: 3       
+                            }
+                        },
+                        vAxis: {
+                            textStyle: { color: 'white', bold: true, fontSize: 14 }
+                        },
+                        annotations: {
+                            textStyle: {
+                                fontSize: 14,
+                                bold: true,
+                                color: 'white'
+                            },
+                            alwaysOutside: false 
+                        },
+                        animation: {
+                            startup: true,
+                            duration: 1000,
+                            easing: 'out'
+                        }
+                    };
+
+                    const chart = new google.visualization.BarChart(document.getElementById('deckStatsChart'));
+                    chart.draw(dataTable, options);
+                });
+        }
+    </script>
+}

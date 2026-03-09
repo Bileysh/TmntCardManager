@@ -33,7 +33,7 @@ public class Card
     [Display(Name = "Фракція")]
     public int? Classid { get; set; }
     [Display(Name = "Фракція")]
-    public virtual Cardclass? Class { get; set; }
+    public virtual Cardclass Class { get; set; }
 
     public virtual ICollection<Deckcard> Deckcards { get; set; } = new List<Deckcard>();
 }
