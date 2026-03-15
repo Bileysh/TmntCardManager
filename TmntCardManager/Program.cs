@@ -1,10 +1,15 @@
 using Microsoft.EntityFrameworkCore;
+using TmntCardManager.Models;
 using TmntCardManager.Models.Data;
+using TmntCardManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IDataPortServiceFactory<Cardclass>, CardClassDataPortServiceFactory>();
+builder.Services.AddScoped<DeckExportService>();
 
 builder.Services.AddDbContext<TmntCardsDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));

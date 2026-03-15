@@ -36,7 +36,7 @@ namespace TmntCardManager.Controllers
 
             var deck = await _context.Decks
                 .Include(d => d.User)
-                .Include(d => d.Deckcards)
+                .Include(d => d.Deckcards)!
                     .ThenInclude(dc => dc.Card)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (deck == null)
@@ -161,6 +161,24 @@ namespace TmntCardManager.Controllers
         private bool DeckExists(int id)
         {
             return _context.Decks.Any(e => e.Id == id);
+        }
+        [HttpGet]
+        public async Task<IActionResult> Export(int id, [FromServices] TmntCardManager.Services.DeckExportService exportService, CancellationToken cancellationToken)
+        {
+            var deck = await _context.Decks.FindAsync(id);
+            if (deck == null) return NotFound();
+
+            var memoryStream = new MemoryStream();
+    
+            await exportService.ExportDeckAsync(memoryStream, id, cancellationToken);
+    
+            await memoryStream.FlushAsync(cancellationToken);
+            memoryStream.Position = 0;
+
+            return new FileStreamResult(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            {
+                FileDownloadName = $"Deck_{deck.Name}_{DateTime.UtcNow:yyyyMMdd}.xlsx"
+            };
         }
     }
 }

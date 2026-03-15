@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Імпорт каталогу карт";
+}
+
+<h1 class="mb-4">Імпорт</h1>
+
+<div class="card bg-transparent border-secondary text-white shadow-sm" style="max-width: 600px;">
+    <div class="card-header border-secondary">
+        <h4 class="mb-0">Оберіть Excel-файл для завантаження</h4>
+    </div>
+    <div class="card-body">
+        <form asp-action="Import" enctype="multipart/form-data" method="post">
+            <div class="form-group mb-4">
+                <label class="mb-2 text-muted">Підтримуваний формат: .xlsx</label>
+                <input type="file" name="fileExcel" class="form-control bg-dark text-white border-secondary" accept=".xlsx" required />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Завантажити файл" class="btn btn-primary px-4" />
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</div>

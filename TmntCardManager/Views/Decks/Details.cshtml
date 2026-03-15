@@ -74,6 +74,9 @@ else
     <a asp-controller="Deckcards" asp-action="Create" asp-route-deckId="@Model.Id" class="btn btn-success btn-lg shadow-sm">
         + Додати нову карту
     </a>
+    <a asp-action="Export" asp-route-id="@Model.Id" class="btn btn-outline-info shadow-sm ms-2">
+        Експортувати колоду (Excel)
+    </a>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a> |
