@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TmntCardManager.Models;
 using TmntCardManager.Models.Data; 
@@ -7,6 +8,7 @@ namespace TmntCardManager.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ChartsController : ControllerBase
     {
         private readonly TmntCardsDbContext _context; 

@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Головна";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-4 text-success fw-bold">Вітаємо у TMNT Card Manager!</h1>
+    <p class="lead text-light mt-3">Збирай свою ідеальну колоду, керуй фракціями та перемагай.</p>
+    
+    @if (!User.Identity?.IsAuthenticated ?? true)
+    {
+        <div class="mt-5">
+            <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-success btn-lg mx-2 px-5">Почати гру</a>
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-success btn-lg mx-2 px-5">Увійти</a>
+        </div>
+    }
+    else
+    {
+        <div class="mt-5">
+            <a asp-controller="Decks" asp-action="Index" class="btn btn-success btn-lg px-5">Перейти до моїх колод</a>
+        </div>
+    }
+</div>

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,13 +12,16 @@ using TmntCardManager.Models.Data;
 
 namespace TmntCardManager.Controllers
 {
+    [Authorize]
     public class PlayerprofilesController : Controller
     {
         private readonly TmntCardsDbContext _context;
-
-        public PlayerprofilesController(TmntCardsDbContext context)
+        private readonly UserManager<User> _userManager;
+        
+        public PlayerprofilesController(TmntCardsDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Playerprofiles
@@ -103,5 +108,61 @@ namespace TmntCardManager.Controllers
         {
             return _context.Playerprofiles.Any(e => e.Id == id);
         }
+        
+        // GET: PlayerProfiles/MyProfile
+        public async Task<IActionResult> MyProfile()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Redirect("/Identity/Account/Login");
+
+            ViewBag.Email = currentUser.Email;
+
+            var profile = await _context.Playerprofiles
+                .FirstOrDefaultAsync(p => p.Id == currentUser.Id);
+
+            var oldDefaultAvatar = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+
+            if (profile == null)
+            {
+                profile = new Playerprofile 
+                { 
+                    Id = currentUser.Id, 
+                    Nickname = "Новий Гравець", 
+                    Avatarurl = "", 
+                    Winrate = 0
+                };
+                _context.Playerprofiles.Add(profile);
+                await _context.SaveChangesAsync();
+            }
+            else if (profile.Avatarurl == oldDefaultAvatar)
+            {
+                profile.Avatarurl = "";
+                _context.Playerprofiles.Update(profile);
+                await _context.SaveChangesAsync();
+            }
+
+            return View(profile); 
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateProfile(int Id, string Nickname, string AvatarUrl)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+    
+            if (Id != currentUser.Id) return Unauthorized();
+
+            var profile = await _context.Playerprofiles.FindAsync(Id);
+            if (profile != null)
+            {
+                profile.Nickname = Nickname;
+        
+                profile.Avatarurl = string.IsNullOrWhiteSpace(AvatarUrl) ? "" : AvatarUrl;
+        
+                _context.Update(profile);
+                await _context.SaveChangesAsync();
+            }
+    
+            return RedirectToAction(nameof(MyProfile)); 
+        }
     }
-}
+}   

@@ -16,9 +16,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Email)
             </th> 
-            <th>
-                @Html.DisplayNameFor(model => model.Role)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -27,20 +24,6 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @if (item.Role == "User")
-                {
-                    <span class="badge bg-primary">Користувач</span>
-                }
-                else if (item.Role == "Admin")
-                {
-                    <span class="badge bg-danger">Адміністратор</span>
-                }
-                else
-                {
-                    @item.Role
-                }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |

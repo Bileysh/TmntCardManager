@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using TmntCardManager.Models.Data;
 
 namespace TmntCardManager.Controllers
 {
+    [Authorize]
     public class CardsController : Controller
     {
         private readonly TmntCardsDbContext _context;
@@ -62,6 +64,7 @@ namespace TmntCardManager.Controllers
         }
 
         // GET: Cards/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(int id, int? factionId)
         {
             ViewBag.ReturnFactionId = factionId;
@@ -74,6 +77,7 @@ namespace TmntCardManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Imageurl,Name,Strength,Agility,Skill,Wit,Classid")] Card card)
         {
             var cardClass = _context.Cardclasses.FirstOrDefault(c => c.Id == card.Classid);
@@ -96,6 +100,7 @@ namespace TmntCardManager.Controllers
         }
 
         // GET: Cards/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id, int? factionId)
         {
             if (id == null)
@@ -118,6 +123,7 @@ namespace TmntCardManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Imageurl,Name,Strength,Agility,Skill,Wit,Classid")] Card card)
         {
             if (id != card.Id)
@@ -151,6 +157,7 @@ namespace TmntCardManager.Controllers
         }
 
         // GET: Cards/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id, int? factionId)
         {
             if (id == null)
@@ -172,6 +179,7 @@ namespace TmntCardManager.Controllers
         // POST: Cards/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var card = await _context.Cards.FindAsync(id);

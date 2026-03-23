@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,21 +12,27 @@ using TmntCardManager.Models.Data;
 
 namespace TmntCardManager.Controllers
 {
+    [Authorize]
     public class DecksController : Controller
     {
         private readonly TmntCardsDbContext _context;
-
-        public DecksController(TmntCardsDbContext context)
+        private readonly UserManager<User> _userManager;
+        
+        public DecksController(TmntCardsDbContext context, UserManager<User> userManager)
         {
+            _userManager = userManager;
             _context = context;
         }
 
         // GET: Decks
         public async Task<IActionResult> Index()
         {
-            var tmntCardsDbContext = _context.Decks.Include(d => d.User);
-            return View(await tmntCardsDbContext.ToListAsync());
-        }
+            var currentUser = await _userManager.GetUserAsync(User);
+            var myDecks = _context.Decks
+                .Include(d => d.User)
+                .Where(d => d.Userid == currentUser.Id);
+            
+            return View(await myDecks.ToListAsync());        }
 
         // GET: Decks/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -50,7 +58,6 @@ namespace TmntCardManager.Controllers
         // GET: Decks/Create
         public IActionResult Create()
         {
-            ViewData["Userid"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
@@ -59,15 +66,17 @@ namespace TmntCardManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Createdat,Userid")] Deck deck)
+        public async Task<IActionResult> Create([Bind("Id,Name,Createdat")] Deck deck)
         {
             if (ModelState.IsValid)
             {
+                var currentUser = await _userManager.GetUserAsync(User);
+                deck.Userid = currentUser.Id; 
+
                 _context.Add(deck);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Userid"] = new SelectList(_context.Users, "Id", "Id", deck.Userid);
             return View(deck);
         }
 

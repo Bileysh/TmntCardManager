@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace TmntCardManager.Models.Data;
 
-public partial class TmntCardsDbContext : DbContext
+public class TmntCardsDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
     public TmntCardsDbContext()
     {
@@ -14,19 +16,15 @@ public partial class TmntCardsDbContext : DbContext
     }
 
     public virtual DbSet<Card> Cards { get; set; }
-
     public virtual DbSet<Cardclass> Cardclasses { get; set; }
-
     public virtual DbSet<Deck> Decks { get; set; }
-
     public virtual DbSet<Deckcard> Deckcards { get; set; }
-
     public virtual DbSet<Playerprofile> Playerprofiles { get; set; }
-
-    public virtual DbSet<User> Users { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        
         modelBuilder.Entity<Card>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("cards_pkey");
@@ -129,25 +127,7 @@ public partial class TmntCardsDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("users_pkey");
-
             entity.ToTable("users");
-
-            entity.HasIndex(e => e.Email, "users_email_key").IsUnique();
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Email)
-                .HasMaxLength(100)
-                .HasColumnName("email");
-            entity.Property(e => e.Passwordhash).HasColumnName("passwordhash");
-            entity.Property(e => e.Role)
-                .HasMaxLength(20)
-                .HasDefaultValueSql("'User'::character varying")
-                .HasColumnName("role");
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
