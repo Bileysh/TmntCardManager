@@ -1,0 +1,23 @@
+﻿@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Підтвердження пошти";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 text-center">
+        <div class="card bg-dark text-light border-secondary shadow-lg">
+            <div class="card-body p-5">
+                <h2 class="text-success mb-4">@ViewData["Title"]</h2>
+                
+                <div class="mb-4">
+                    <span style="font-size: 5rem; color: #198754;">✓</span>
+                </div>
+                
+                <h5 class="text-light mb-4">@Model.StatusMessage</h5>
+                
+                <a asp-page="./Login" class="btn btn-outline-success btn-lg px-5">Перейти до входу</a>
+            </div>
+        </div>
+    </div>
+</div>
