@@ -2,46 +2,44 @@
 
 @{
     ViewData["Title"] = "Мій профіль";
-    
     var defaultAvatar = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
     var displayAvatar = string.IsNullOrWhiteSpace(Model.Avatarurl) ? defaultAvatar : Model.Avatarurl;
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-7">
-        <div class="card bg-dark text-light border-secondary shadow-lg">
-            <div class="card-header border-secondary text-center p-3">
-                <h3 class="text-success mb-0"> @ViewData["Title"]</h3>
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card bg-dark text-light shadow-lg" style="border: 2px solid #198754; border-radius: 15px;">
+            <div class="card-header border-bottom border-success text-center p-3">
+                <h3 class="text-success mb-0 fw-bold"> @ViewData["Title"]</h3>
             </div>
-            <div class="card-body text-center p-5">
+            <div class="card-body text-center p-4">
                 
-                <img src="@displayAvatar" alt="Avatar" class="rounded-circle mb-4 shadow-lg" 
-                     style="width: 170px; height: 170px; object-fit: cover; border: 4px solid #198754; padding: 3px; background-color: #212529;" 
+                <img src="@displayAvatar" alt="Avatar" class="rounded-circle mb-3 shadow-lg" 
+                     style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #198754; background-color: #212529;" 
                      onerror="this.src='@defaultAvatar'" />
                 
-                <h2 class="mb-1 fw-bold text-success">@Model.Nickname</h2>
-                
-                <p class="text-light mb-3 fs-6">@ViewBag.Email</p> 
-                
+                <h2 class="mb-1 fw-bold text-white">@Model.Nickname</h2>
+                <p class="text-black mb-3 fs-6">@ViewBag.Email</p> 
                 <p class="text-light mb-4 fs-5">Відсоток перемог: <strong class="text-warning">@Model.Winrate %</strong></p>
 
-                <hr class="border-secondary mb-5" />
+                <hr class="border-success mb-4" />
 
                 <form asp-action="UpdateProfile" method="post" class="text-start">
                     <input type="hidden" asp-for="Id" />
                     
-                    <div class="form-floating mb-3">
-                        <input asp-for="Nickname" class="form-control bg-dark text-light border-secondary" placeholder="Нікнейм" required />
-                        <label asp-for="Nickname" class="text-muted">Нікнейм у грі</label>
+                    <div class="mb-3">
+                        <label asp-for="Nickname" class="form-label text-black fw-bold ">Нікнейм у грі</label>
+                        <input asp-for="Nickname" class="form-control bg-light-subtle text-black border-success" placeholder="Введіть нікнейм" required />
                     </div>
                     
-                    <div class="form-floating mb-2">
-                        <input asp-for="Avatarurl" class="form-control bg-dark text-light border-secondary" placeholder="https://..." />
-                        <label asp-for="Avatarurl" class="text-muted">URL власної аватарки</label>
+                    <div class="mb-4">
+                        <label asp-for="Avatarurl" class="form-label text-black fw-bold">Посилання на аватар (URL)</label>
+                        <input asp-for="Avatarurl" class="form-control bg-light-subtle text-black border-success" 
+                               style="text-overflow: ellipsis; overflow: hidden;" placeholder="https://..." />
+                        <div class="form-text text-light mt-1 opacity-75">Залиште порожнім для стандартної картинки.</div>
                     </div>
-                    <div class="form-text text-muted mb-4 px-2">Залиште поле порожнім, щоб використовувати стандартну картинку.</div>
 
-                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold">Зберегти зміни Профілю</button>
+                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow">Зберегти зміни Профілю</button>
                 </form>
 
             </div>

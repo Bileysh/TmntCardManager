@@ -12,6 +12,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IDataPortServiceFactory<Cardclass>, CardClassDataPortServiceFactory>();
 builder.Services.AddScoped<DeckExportService>();
+builder.Services.AddScoped<CardImportValidator>();
+builder.Services.AddScoped<CardImportManager>();
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddControllersWithViews();
@@ -23,11 +25,11 @@ builder.Services.AddDbContext<TmntCardsDbContext>(options =>
 builder.Services.AddIdentity<User, IdentityRole<int>>(options => 
     {
         options.SignIn.RequireConfirmedAccount = true;
-        options.Password.RequireDigit = false;
-        options.Password.RequireLowercase = false;
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = true;
         options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequiredLength = 3;
+        options.Password.RequireUppercase = true;
+        options.Password.RequiredLength = 6;
     })
 .AddRoles<IdentityRole<int>>()
 .AddEntityFrameworkStores<TmntCardsDbContext>()

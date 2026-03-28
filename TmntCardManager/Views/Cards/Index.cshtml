@@ -1,69 +1,43 @@
-@model IEnumerable<TmntCardManager.Models.Card>
+@model IEnumerable<TmntCardManager.Models.Card> 
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Галерея Карт";
 }
 
-<h1>Картки фракції: @ViewBag.CardclassName</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-success fw-bold">@ViewData["Title"]</h1>
+        
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-warning fw-bold shadow">
+                + Створити нову карту 
+            </a>
+        }
+    </div>
 
-<p>
-    <a asp-action="Create" asp-route-id="@ViewBag.CardclassId" asp-route-factionId="@ViewBag.CardclassId" class="btn btn-success">Додати нову картку</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Зображення</th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Strength)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Agility)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Skill)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Wit)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Class.Name)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                 <img src="@item.Imageurl" alt="@item.Name" style="max-height: 150px; border-radius: 10px;"/>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Strength)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Agility)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Skill)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Wit)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Class.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" asp-route-factionId="@ViewBag.CardclassId">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id" asp-route-factionId="@ViewBag.CardclassId">Деталі</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id" asp-route-factionId="@ViewBag.CardclassId">Видалити</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var item in Model) {
+            <div class="col">
+                <div class="card h-100 bg-dark text-light border-success shadow-lg" style="border-width: 2px; border-radius: 12px; overflow: hidden;">
+                    
+                    <img src="@item.Imageurl" class="card-img-top p-2" alt="@item.Name" height="400" onerror="this.src='https://media.istockphoto.com/id/1581323346/uk/%D0%B2%D0%B5%D0%BA%D1%82%D0%BE%D1%80%D0%BD%D1%96-%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F/%D1%84%D0%BE%D1%82%D0%BE-%D0%B7%D1%8F%D0%B2%D0%B8%D1%82%D1%8C%D1%81%D1%8F-%D0%BD%D0%B5%D0%B7%D0%B0%D0%B1%D0%B0%D1%80%D0%BE%D0%BC-%D1%84%D0%BE%D1%82%D0%BE%D0%B3%D1%80%D0%B0%D1%84%D1%96%D0%B9-%D0%BF%D0%BE%D0%BA%D0%B8-%D0%BD%D0%B5%D0%BC%D0%B0%D1%94-%D0%BA%D0%BD%D0%BE%D0%BF%D0%BA%D0%B0-%D1%84%D0%BE%D1%82%D0%BE-%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D1%8C-%D0%BF%D0%BE%D0%BA%D0%B8-%D0%BD%D0%B5%D0%BC%D0%B0%D1%94.jpg?s=612x612&w=0&k=20&c=1DrJprWMQ8ja7yoeRDhocvkl7WRHB57l43pVnfW_ECc='" />
+                    
+                    <div class="card-footer bg-transparent border-secondary text-center p-3">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm w-100 mb-2 shadow">
+                            Детальніше
+                        </a>
+                        
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="btn-group w-100" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm shadow">Ред.</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm shadow">Вид.</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

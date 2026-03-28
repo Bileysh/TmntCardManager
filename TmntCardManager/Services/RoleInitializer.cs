@@ -26,7 +26,7 @@ public class RoleInitializer
                 UserName = "admin@admin.com", 
                 EmailConfirmed = true 
             };
-            IdentityResult result = await userManager.CreateAsync(admin, "123");
+            IdentityResult result = await userManager.CreateAsync(admin, "Admin123");
     
             if (result.Succeeded)
             {

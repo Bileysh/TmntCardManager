@@ -15,7 +15,7 @@ namespace TmntCardManager.Services
         public IImportService<Cardclass> GetImportService(string contentType)
         {
             if (contentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                return new CardClassImportService(_context);
+                return new CardClassImportService();
             throw new NotImplementedException($"No import service implemented for {contentType}");
         }
 

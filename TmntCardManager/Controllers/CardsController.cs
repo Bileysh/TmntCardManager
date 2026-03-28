@@ -11,7 +11,6 @@ using TmntCardManager.Models.Data;
 
 namespace TmntCardManager.Controllers
 {
-    [Authorize]
     public class CardsController : Controller
     {
         private readonly TmntCardsDbContext _context;
@@ -126,34 +125,30 @@ namespace TmntCardManager.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Imageurl,Name,Strength,Agility,Skill,Wit,Classid")] Card card)
         {
-            if (id != card.Id)
-            {
-                return NotFound();
-            }
+            if (id != card.Id) return NotFound();
 
-            if (ModelState.IsValid)
+            var existingCard = await _context.Cards.FindAsync(id);
+            if (existingCard == null) return NotFound();
+
+            existingCard.Name = card.Name;
+            existingCard.Strength = card.Strength;
+            existingCard.Agility = card.Agility;
+            existingCard.Skill = card.Skill;
+            existingCard.Wit = card.Wit;
+            existingCard.Imageurl = card.Imageurl;
+            existingCard.Classid = card.Classid;
+
+            try
             {
-                try
-                {
-                    _context.Update(card);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CardExists(card.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction("Details", "CardClasses", new { id = card.Classid });
-                
+                _context.Update(existingCard);
+                await _context.SaveChangesAsync();
             }
-            ViewData["Classid"] = new SelectList(_context.Cardclasses, "Id", "Name", card.Classid);
-            return View(card);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CardExists(card.Id)) return NotFound();
+                else throw;
+            }
+            return RedirectToAction("Details", "CardClasses", new { id = card.Classid });
         }
 
         // GET: Cards/Delete/5

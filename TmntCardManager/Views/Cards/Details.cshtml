@@ -54,7 +54,10 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a> |
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати |</a> 
+    }
     @if (ViewBag.ReturnFactionId != null)
     {
         <a asp-action="Index" asp-route-id="@ViewBag.ReturnFactionId">Назад до списку карт фракцій</a>
@@ -63,4 +66,4 @@
     {
         <a asp-action="Index">Назад до всіх карт</a>
     }
-    </div>
+</div>

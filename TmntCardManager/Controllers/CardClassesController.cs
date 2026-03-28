@@ -17,10 +17,12 @@ namespace TmntCardManager.Controllers
     {
         private readonly TmntCardsDbContext _context;
         private readonly IDataPortServiceFactory<Cardclass> _portFactory;
+        private readonly CardImportManager _importManager;
 
-        public CardClassesController(TmntCardsDbContext context, IDataPortServiceFactory<Cardclass> portFactory)
+        public CardClassesController(TmntCardsDbContext context, IDataPortServiceFactory<Cardclass> portFactory, CardImportManager importManager)
         {
             _portFactory = portFactory;
+            _importManager = importManager;
             _context = context;
         }
 
@@ -182,14 +184,27 @@ namespace TmntCardManager.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Import(IFormFile fileExcel, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Import(IFormFile? fileExcel, CancellationToken cancellationToken = default)
         {
-            if (fileExcel == null || fileExcel.Length == 0) return View(); // Якщо файл не вибрано
+            if (fileExcel == null || fileExcel.Length == 0) return RedirectToAction(nameof(Index));
 
-            var importService = _portFactory.GetImportService(fileExcel.ContentType);
-            using var stream = fileExcel.OpenReadStream();
-            await importService.ImportFromStreamAsync(stream, cancellationToken);
-    
+            try
+            {
+                var importService = _portFactory.GetImportService(fileExcel.ContentType);
+                using var stream = fileExcel.OpenReadStream();
+                var rawClasses = await importService.ImportFromStreamAsync(stream, cancellationToken);
+                
+                var result = await _importManager.ProcessAndSaveAsync(rawClasses, cancellationToken);
+                
+                if (result.HasError) TempData["ErrorMessage"] = result.ErrorMessage;
+                if (!string.IsNullOrEmpty(result.WarningMessage)) TempData["WarningMessage"] = result.WarningMessage;
+                if (!string.IsNullOrEmpty(result.SuccessMessage)) TempData["SuccessMessage"] = result.SuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Критична помилка імпорту: {ex.Message}";
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }

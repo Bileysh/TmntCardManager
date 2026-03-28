@@ -124,10 +124,24 @@ namespace TmntCardManager.Controllers
 
             if (profile == null)
             {
+                string newnickname = "";
+                var random = new Random();
+        
+                while (true)
+                {
+                    newnickname = "Player" + random.Next(1000, 9999);
+                    bool nicknameExists = await _context.Playerprofiles.AnyAsync(p => p.Nickname == newnickname);
+            
+                    if (!nicknameExists)
+                    {
+                        break; 
+                    }
+                }
+
                 profile = new Playerprofile 
                 { 
                     Id = currentUser.Id, 
-                    Nickname = "Новий Гравець", 
+                    Nickname = newnickname, 
                     Avatarurl = "", 
                     Winrate = 0
                 };

@@ -1,62 +1,51 @@
 ﻿using ClosedXML.Excel;
-using Microsoft.EntityFrameworkCore;
 using TmntCardManager.Models;
-using TmntCardManager.Models.Data;
 
 namespace TmntCardManager.Services
 {
     public class CardClassImportService : IImportService<Cardclass>
     {
-        private readonly TmntCardsDbContext _context;
+        public CardClassImportService() { }
 
-        public CardClassImportService(TmntCardsDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task ImportFromStreamAsync(Stream stream, CancellationToken cancellationToken)
+        public async Task<List<Cardclass>> ImportFromStreamAsync(Stream stream, CancellationToken cancellationToken)
         {
             if (!stream.CanRead) throw new ArgumentException("Дані не можуть бути прочитані", nameof(stream));
-
+            
+            var resultList = new List<Cardclass>();
             using var workBook = new XLWorkbook(stream);
 
             foreach (IXLWorksheet worksheet in workBook.Worksheets)
             {
                 var fractionName = worksheet.Name;
                 
-                var fraction = await _context.Cardclasses
-                    .FirstOrDefaultAsync(c => c.Name == fractionName, cancellationToken);
-                if (fraction == null)
-                {
-                    fraction = new Cardclass { Name = fractionName, Description = "Імпортовано з Excel" };
-                    _context.Cardclasses.Add(fraction);
-                    await _context.SaveChangesAsync(cancellationToken); 
-                }
+                var fraction = new Cardclass 
+                { 
+                    Name = fractionName, 
+                    Description = "Імпортовано з Excel",
+                    Cards = new List<Card>() 
+                };
 
                 foreach (var row in worksheet.RowsUsed().Skip(1))
                 {
                     var cardName = row.Cell(1).Value.ToString();
-                    if (string.IsNullOrWhiteSpace(cardName)) continue;
 
-                    var card = await _context.Cards
-                        .FirstOrDefaultAsync(c => c.Name == cardName, cancellationToken);
-                    if (card == null)
+                    var card = new Card
                     {
-                        card = new Card();
-                        _context.Cards.Add(card);
-                    }
+                        Name = cardName,
+                        Strength = int.TryParse(row.Cell(2).Value.ToString(), out int str) ? str : 0,
+                        Agility = int.TryParse(row.Cell(3).Value.ToString(), out int agi) ? agi : 0,
+                        Skill = int.TryParse(row.Cell(4).Value.ToString(), out int skl) ? skl : 0,
+                        Wit = int.TryParse(row.Cell(5).Value.ToString(), out int wit) ? wit : 0,
+                        Imageurl = row.Cell(6).Value.ToString()
+                    };
 
-                    card.Name = cardName;
-                    card.Strength = int.TryParse(row.Cell(2).Value.ToString(), out int str) ? str : 0;
-                    card.Agility = int.TryParse(row.Cell(3).Value.ToString(), out int agi) ? agi : 0;
-                    card.Skill = int.TryParse(row.Cell(4).Value.ToString(), out int skl) ? skl : 0;
-                    card.Wit = int.TryParse(row.Cell(5).Value.ToString(), out int wit) ? wit : 0;
-                    card.Imageurl = row.Cell(6).Value.ToString();
-                    card.Classid = fraction.Id;
+                    fraction.Cards.Add(card);
                 }
+
+                resultList.Add(fraction);
             }
 
-            await _context.SaveChangesAsync(cancellationToken);
+            return await Task.FromResult(resultList);
         }
     }
 }
