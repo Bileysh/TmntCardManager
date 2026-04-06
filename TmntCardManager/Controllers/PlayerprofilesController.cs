@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -124,7 +120,7 @@ namespace TmntCardManager.Controllers
 
             if (profile == null)
             {
-                string newnickname = "";
+                string newnickname;
                 var random = new Random();
         
                 while (true)
@@ -159,24 +155,41 @@ namespace TmntCardManager.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfile(int Id, string Nickname, string AvatarUrl)
+        public async Task<IActionResult> UpdateProfile(Playerprofile model)
         {
             var currentUser = await _userManager.GetUserAsync(User);
     
-            if (Id != currentUser.Id) return Unauthorized();
-
-            var profile = await _context.Playerprofiles.FindAsync(Id);
-            if (profile != null)
+            if (currentUser == null) return Redirect("/Identity/Account/Login");
+            
+            var existingProfile = await _context.Playerprofiles.FirstOrDefaultAsync(p => p.Id == currentUser.Id);
+            if (existingProfile == null) return NotFound();
+            
+            if (existingProfile.Nickname != model.Nickname)
             {
-                profile.Nickname = Nickname;
+                bool isNicknameTaken = await _context.Playerprofiles.AnyAsync(p => p.Nickname == model.Nickname);
         
-                profile.Avatarurl = string.IsNullOrWhiteSpace(AvatarUrl) ? "" : AvatarUrl;
-        
-                _context.Update(profile);
-                await _context.SaveChangesAsync();
+                if (isNicknameTaken)
+                {
+                    TempData["ErrorMessage"] = $"Нікнейм '{model.Nickname}' вже зайнятий іншим гравцем. Обери щось інше!";
+                    return RedirectToAction(nameof(MyProfile));
+                }
             }
-    
-            return RedirectToAction(nameof(MyProfile)); 
+
+            existingProfile.Nickname = model.Nickname;
+            existingProfile.Avatarurl = string.IsNullOrWhiteSpace(model.Avatarurl) ? "" : model.Avatarurl;
+
+            try
+            {
+                _context.Playerprofiles.Update(existingProfile);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Профіль успішно оновлено!";
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Сталася помилка при збереженні профілю.";
+            }
+
+            return RedirectToAction(nameof(MyProfile));
         }
-    }
-}   
+   }
+}
