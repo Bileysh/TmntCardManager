@@ -36,4 +36,5 @@ public class Card
     public virtual Cardclass Class { get; set; }
 
     public virtual ICollection<Deckcard> Deckcards { get; set; } = new List<Deckcard>();
+    public virtual ICollection<UserCard> Usercards { get; set; } = new List<UserCard>();
 }

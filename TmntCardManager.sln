@@ -2,6 +2,13 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TmntCardManager", "TmntCardManager\TmntCardManager.csproj", "{822BF091-31FB-45DB-B789-3E29900DFA8F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BEAE6047-0EED-47E2-B5AA-3FB8B92B7150}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TmntCardManager.Api", "TmntCardManager.Api\TmntCardManager.Api.csproj", "{258460BF-2592-45B1-B28E-8E23EC62F9DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +19,9 @@ Global
 		{822BF091-31FB-45DB-B789-3E29900DFA8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{822BF091-31FB-45DB-B789-3E29900DFA8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{822BF091-31FB-45DB-B789-3E29900DFA8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{258460BF-2592-45B1-B28E-8E23EC62F9DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{258460BF-2592-45B1-B28E-8E23EC62F9DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{258460BF-2592-45B1-B28E-8E23EC62F9DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{258460BF-2592-45B1-B28E-8E23EC62F9DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

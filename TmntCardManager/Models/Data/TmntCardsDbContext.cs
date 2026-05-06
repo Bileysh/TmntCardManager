@@ -20,10 +20,118 @@ public class TmntCardsDbContext : IdentityDbContext<User, IdentityRole<int>, int
     public virtual DbSet<Deck> Decks { get; set; }
     public virtual DbSet<Deckcard> Deckcards { get; set; }
     public virtual DbSet<Playerprofile> Playerprofiles { get; set; }
-    
+    public virtual DbSet<UserCard> Usercards { get; set; }
+    public virtual DbSet<ShopItem> ShopItems { get; set; }
+    public virtual DbSet<Transaction> Transactions { get; set; }
+    public virtual DbSet<Match> Matches { get; set; }
+    public virtual DbSet<Tournament> Tournaments { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Tournament>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("tournaments_pkey");
+            entity.ToTable("tournaments");
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
+            entity.Property(e => e.StartDate)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("startedat");
+            entity.Property(e => e.EndDate)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("endedat");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasColumnName("isactive");
+            entity.Property(e => e.Description)
+                .HasColumnName("description");
+        });
+        
+        modelBuilder.Entity<Match>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("matches_pkey");
+            entity.ToTable("matches");
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Player1Id).HasColumnName("player1id");
+            entity.Property(e => e.Player2Id).HasColumnName("player2id");
+            entity.Property(e => e.WinnerId).HasColumnName("winnerid");
+            entity.Property(e => e.PlayedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("playedat");      
+                entity.HasOne(d => d.Player1).WithMany(p => p.MatchesAsPlayer1)
+                .HasForeignKey(d => d.Player1Id)
+                .HasConstraintName("fk_matches_player1");
+            entity.HasOne(d => d.Player2).WithMany(p => p.MatchesAsPlayer2)   
+                .HasForeignKey(d => d.Player2Id)
+                .HasConstraintName("fk_matches_player2");
+            entity.HasOne(d => d.Winner).WithMany(p => p.MatchesAsWinner)   
+                .HasForeignKey(d => d.WinnerId)
+                .HasConstraintName("fk_matches_winner");
+        });
+        
+        modelBuilder.Entity<ShopItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("shopitems_pkey");
+            entity.ToTable("shopitems");
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.PriceCoins).HasColumnName("price");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.ImageUrl).HasColumnName("image_url");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
+            entity.HasMany(d => d.Transactions).WithOne(p => p.ShopItem)
+                .HasForeignKey(d => d.ShopItemId)
+                .HasConstraintName("fk_shopitems_transactions");
+        });
+        
+        modelBuilder.Entity<Transaction>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("transactions_pkey");
+            entity.ToTable("transactions");
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.UserId).HasColumnName("userid");
+            entity.Property(e => e.ShopItemId).HasColumnName("shopitemid");
+            entity.Property(e => e.SpentCoins).HasColumnName("spentcoins");
+            entity.Property(e => e.PurchasedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("purchasedat");      
+                entity.HasOne(d => d.User).WithMany(p => p.Transactions)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("fk_transactions_user");
+            entity.HasOne(d => d.ShopItem).WithMany(p => p.Transactions)   
+                .HasForeignKey(d => d.ShopItemId)
+                .HasConstraintName("fk_transactions_shopitems");
+                
+                    
+        });
+        modelBuilder.Entity<UserCard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("usercards_pkey");
+
+            entity.ToTable("usercards");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CardId).HasColumnName("cardid");
+            entity.Property(e => e.UserId).HasColumnName("userid");
+            entity.Property(e => e.Quantity)
+                .HasDefaultValue(1)
+                .HasColumnName("quantity");
+
+            entity.HasOne(d => d.Card).WithMany(p => p.Usercards)
+                .HasForeignKey(d => d.CardId)
+                .HasConstraintName("fk_usercards_card");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Usercards)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("fk_usercards_user");
+        });
         
         modelBuilder.Entity<Card>(entity =>
         {

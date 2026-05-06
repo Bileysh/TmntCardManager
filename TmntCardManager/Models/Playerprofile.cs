@@ -16,5 +16,10 @@ public class Playerprofile
     [Required(ErrorMessage = "Поле 'Аватарка' є обов'язковим")]
     public string? Avatarurl { get; set; }
 
+    public int Level { get; set; } = 1;
+    public int Experience { get; set; } = 0;
+    public int BalanceCoins { get; set; } = 0;
+    
     public virtual User IdNavigation { get; set; } 
+    public int? ActiveTournamentId { get; set; }
 }

@@ -6,8 +6,6 @@ using TmntCardManager.Models.Data;
 
 namespace TmntCardManager.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
     public class ChartsController : ControllerBase
     {

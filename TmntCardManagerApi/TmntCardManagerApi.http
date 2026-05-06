@@ -1,0 +1,6 @@
+@TmntCardManagerApi_HostAddress = http://localhost:5164
+
+GET {{TmntCardManagerApi_HostAddress}}
+Accept: application/json
+
+###

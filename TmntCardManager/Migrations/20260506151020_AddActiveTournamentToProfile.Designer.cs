@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TmntCardManager.Models.Data;
@@ -11,9 +12,11 @@ using TmntCardManager.Models.Data;
 namespace TmntCardManager.Migrations
 {
     [DbContext(typeof(TmntCardsDbContext))]
-    partial class TmntCardsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260506151020_AddActiveTournamentToProfile")]
+    partial class AddActiveTournamentToProfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

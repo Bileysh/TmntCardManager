@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TmntCardManager.Models.Data;
@@ -11,9 +12,11 @@ using TmntCardManager.Models.Data;
 namespace TmntCardManager.Migrations
 {
     [DbContext(typeof(TmntCardsDbContext))]
-    partial class TmntCardsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260505144359_AddShopItemsAndTransactions")]
+    partial class AddShopItemsAndTransactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,59 +297,12 @@ namespace TmntCardManager.Migrations
                     b.ToTable("deckcards", (string)null);
                 });
 
-            modelBuilder.Entity("TmntCardManager.Models.Match", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("PlayedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("playedat")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<int>("Player1Id")
-                        .HasColumnType("integer")
-                        .HasColumnName("player1id");
-
-                    b.Property<int>("Player2Id")
-                        .HasColumnType("integer")
-                        .HasColumnName("player2id");
-
-                    b.Property<int?>("TournamentId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("WinnerId")
-                        .HasColumnType("integer")
-                        .HasColumnName("winnerid");
-
-                    b.HasKey("Id")
-                        .HasName("matches_pkey");
-
-                    b.HasIndex("Player1Id");
-
-                    b.HasIndex("Player2Id");
-
-                    b.HasIndex("TournamentId");
-
-                    b.HasIndex("WinnerId");
-
-                    b.ToTable("matches", (string)null);
-                });
-
             modelBuilder.Entity("TmntCardManager.Models.Playerprofile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("id");
-
-                    b.Property<int?>("ActiveTournamentId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Avatarurl")
                         .IsRequired()
@@ -411,50 +367,6 @@ namespace TmntCardManager.Migrations
                         .HasName("shopitems_pkey");
 
                     b.ToTable("shopitems", (string)null);
-                });
-
-            modelBuilder.Entity("TmntCardManager.Models.Tournament", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("endedat");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true)
-                        .HasColumnName("isactive");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
-
-                    b.Property<int>("PrizeCoins")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("StartDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("startedat")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.HasKey("Id")
-                        .HasName("tournaments_pkey");
-
-                    b.ToTable("tournaments", (string)null);
                 });
 
             modelBuilder.Entity("TmntCardManager.Models.Transaction", b =>
@@ -688,40 +600,6 @@ namespace TmntCardManager.Migrations
                     b.Navigation("Deck");
                 });
 
-            modelBuilder.Entity("TmntCardManager.Models.Match", b =>
-                {
-                    b.HasOne("TmntCardManager.Models.User", "Player1")
-                        .WithMany("MatchesAsPlayer1")
-                        .HasForeignKey("Player1Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_matches_player1");
-
-                    b.HasOne("TmntCardManager.Models.User", "Player2")
-                        .WithMany("MatchesAsPlayer2")
-                        .HasForeignKey("Player2Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_matches_player2");
-
-                    b.HasOne("TmntCardManager.Models.Tournament", "Tournament")
-                        .WithMany()
-                        .HasForeignKey("TournamentId");
-
-                    b.HasOne("TmntCardManager.Models.User", "Winner")
-                        .WithMany("MatchesAsWinner")
-                        .HasForeignKey("WinnerId")
-                        .HasConstraintName("fk_matches_winner");
-
-                    b.Navigation("Player1");
-
-                    b.Navigation("Player2");
-
-                    b.Navigation("Tournament");
-
-                    b.Navigation("Winner");
-                });
-
             modelBuilder.Entity("TmntCardManager.Models.Playerprofile", b =>
                 {
                     b.HasOne("TmntCardManager.Models.User", "IdNavigation")
@@ -801,12 +679,6 @@ namespace TmntCardManager.Migrations
             modelBuilder.Entity("TmntCardManager.Models.User", b =>
                 {
                     b.Navigation("Decks");
-
-                    b.Navigation("MatchesAsPlayer1");
-
-                    b.Navigation("MatchesAsPlayer2");
-
-                    b.Navigation("MatchesAsWinner");
 
                     b.Navigation("Playerprofile");
 

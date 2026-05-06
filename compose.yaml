@@ -1,0 +1,13 @@
+﻿services:
+  webapplication1:
+    image: webapplication1
+    build:
+      context: .
+      dockerfile: WebApplication1/Dockerfile
+
+  tmntcardmanager.api:
+    image: tmntcardmanager.api
+    build:
+      context: .
+      dockerfile: TmntCardManager.Api/Dockerfile
+
